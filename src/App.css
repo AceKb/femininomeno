@@ -1,0 +1,336 @@
+/* Define CSS variables for theme colors */
+:root {
+  --background-color: white;
+  --text-color: rgb(255, 255, 255);
+  --navbar-background-color: #ff3c84;
+  --navbar-text-color: white;
+  --sort-container-background-color: #f81f84;
+  --sort-container-selected-background-color: #ff276f;
+  --detail-container-text-color: #de105f; /* Purple for light mode */
+  --comment-section-background-color: rgb(241, 241, 241);
+  --action-background-color: rgb(0, 0, 0);
+  --icon-color: black; /* Add icon color for light mode */
+  --title-color: black; /* Title color for light mode */
+}
+
+.dark {
+  --background-color: #1e1e2f; /* Dark purple background */
+  --text-color: #e4e4e4;
+  --navbar-background-color: #2c2c3e; /* Darker purple for navbar */
+  --navbar-text-color: #e4e4e4;
+  --sort-container-background-color: #3a3a4f; /* Dark purple for sort container */
+  --sort-container-selected-background-color: #4a4a6f; /* Slightly lighter purple for selected sort */
+  --detail-container-text-color: #ff0095; /* Pink for dark mode */
+  --comment-section-background-color: #ff0c71; /* Darker purple for comment section */
+  --action-background-color: #f50c69; /* Dark purple for action background */
+  --icon-color: #e4e4e4; /* Add icon color for dark mode */
+  --title-color: white; /* Title color for dark mode */
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+#root {
+  max-width: 1280px;
+  text-align: center;
+}
+
+li {
+  /* list-style: none; */
+  text-align: left;
+}
+
+.app {
+  width: 100%;
+  /* height: 100%; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.navbar {
+  width: 80%;
+  position: sticky;
+  top: 0;
+  background-color: var(--navbar-background-color);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.2rem 10%;
+}
+
+.navbar h3 {
+  color: var(--navbar-text-color);
+  margin: 0.6rem 0rem;
+}
+
+.navbar input {
+  border: none;
+  padding: .5rem .8rem;
+  width: 30%;
+  border-radius: 5px;
+}
+
+.navbar a {
+  text-decoration: none;
+  font-weight: 500;
+  color: var(--navbar-text-color);
+}
+.navbar a:hover {
+  color: var(--text-color);
+}
+
+.navbar nav {
+  font-size: 16px;
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  font-weight: 500;
+}
+
+.outlet-container {
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.create-page, .edit-page {
+  margin-top: 2rem;
+  width: 50%;
+  border-radius: 10px;
+  background-color: var(--background-color);
+  padding: 1rem 2rem 2rem 2rem;
+  color: var(--text-color); /* Ensure text color changes with theme */
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: .8rem;
+  margin: 1rem 0rem;
+}
+
+form input, form textarea {
+  border: 1px solid gainsboro;
+  border-radius: 5px;
+  font-size: 16px;
+  padding: 5px 10px;
+  color: var(--text-color); /* Ensure text color changes with theme */
+}
+
+.dark form input, .dark form textarea {
+  color: #ffffff; /* Ensure input text is white in dark mode */
+}
+
+form textarea {
+  resize: none;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+.home-page {
+  width: 100%;
+  margin: 1rem 0rem;
+  color: var(--text-color); /* Ensure text color changes with theme */
+}
+
+.home-page a {
+  text-decoration: none;
+  color: var(--text-color);
+}
+
+.sort-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.sort-container span {
+  background-color: var(--sort-container-background-color);
+  border-radius: 5px;
+  margin: 0px 4px;
+  padding: 1px 10px;
+  color: white;
+  cursor: pointer;
+}
+.sort-container span.selected {
+  background-color: var(--sort-container-selected-background-color);
+}
+sort-container span:first-child {
+  margin-left: 10px;
+}
+
+.post-container {
+  background-color: var(--background-color);
+  margin: 1rem 0rem;
+  border-radius: 5px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  color: var(--text-color); /* Ensure text color changes with theme */
+}
+
+.post-container .title, .detail-container .title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: .8rem 0rem;
+  color: white; /* Ensure title color changes with theme */
+}
+
+.dark .post-container .title, .dark .detail-container .title {
+  color: #ffffff; /* Ensure title is white in dark mode */
+}
+
+.post-container .time, .post-container .upvote {
+  color: var(--detail-container-text-color);
+}
+
+.detail-page {
+  width: 100%;
+  margin: 1.5rem 0rem;
+  background-color: var(--background-color);
+  border-radius: 5px;
+  padding: 1.5rem;
+  color: var(--text-color); /* Ensure text color changes with theme */
+}
+
+.detail-container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  text-align: start;
+}
+
+.detail-container .time, .detail-container .upvote, .detail-container .content {
+  color: var(--detail-container-text-color);
+}
+
+.post-img {
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
+  width: 250px;
+}
+
+.edit-section {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.upvote span:first-child {
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.action {
+  display: flex;
+  flex-direction: row;
+  background-color: var(--action-background-color);
+}
+.action span:first-child {
+  margin-right: 8px;
+}
+.action span {
+  cursor: pointer;
+  background-color: rgb(241, 241, 241);
+  border-radius: 20px;
+  padding: 1px 5px;
+}
+
+.comment-section {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  background-color: var(--comment-section-background-color);
+  border-radius: 5px;
+  margin-top: .8rem;
+  padding: 1rem .8rem;
+}
+
+.comment-section input {
+  border: none;
+  padding: .5rem;
+  border-radius: 5px;
+  width: 100%;
+}
+
+.send-comment {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.comment-section button {
+  font-size: 14px;
+  padding: .4rem .8rem;
+}
+
+.comment-section ul {
+  margin-top: 0;
+  padding-left: 1rem;
+}
+.comment-section li {
+  list-style-type: "\2010\2002";
+}
+
+.secret-key-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.secret-key-container input {
+  border: 1px solid gainsboro;
+  border-radius: 5px;
+  font-size: 16px;
+  padding: 5px 10px;
+  margin-bottom: 0.5rem;
+}
+
+.secret-key-container button {
+  font-size: 14px;
+  padding: .4rem .8rem;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--navbar-background-color);
+  color: var(--navbar-text-color);
+  cursor: pointer;
+}
+
+.secret-key-container button:hover {
+  background-color: var(--sort-container-selected-background-color);
+}
+
+.theme-icon {
+  color: var(--icon-color); /* Apply icon color */
+}
+
+.post-container .time, .post-container .upvote, .detail-container .time, .detail-container .upvote {
+  color: var(--detail-container-text-color);
+}
+
+.dark .post-container .time, .dark .post-container .upvote, .dark .detail-container .time, .dark .detail-container .upvote {
+  color: #ffffff; /* Ensure text is visible in dark mode */
+}
+
+.action .edit, .action .delete {
+  color: var(--icon-color); /* Ensure icon color changes with theme */
+}
+
+:root .action .edit, :root .action .delete {
+  color: #000000; /* Darker icons for light mode */
+}
+
+.loading {
+  font-size: 1.5rem;
+  color: var(--text-color);
+  text-align: center;
+  margin-top: 2rem;
+}
