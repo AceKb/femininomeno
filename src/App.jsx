@@ -5,17 +5,7 @@ import { FaSun, FaMoon } from 'react-icons/fa'; // Import icons
 
 const App = () => {
   const [searchInput, setSearchInput] = useState("");
-  const [userId, setUserId] = useState("");
   const [theme, setTheme] = useState('light'); // Add theme state
-
-  useEffect(() => {
-    let storedUserId = localStorage.getItem('userId');
-    if (!storedUserId) {
-      storedUserId = `user_${Math.random().toString(36).substr(2, 9)}`;
-      localStorage.setItem('userId', storedUserId);
-    }
-    setUserId(storedUserId);
-  }, []);
 
   useEffect(() => {
     document.body.className = theme; // Apply the theme to the body element
@@ -28,7 +18,7 @@ const App = () => {
   return (
     <div className={`app ${theme}`}> {/* Apply theme class to root element */}
       <div className="navbar">
-        <Link to="/femininomenon">
+      <Link to="/femininomenon">
           <h3>femininomenon</h3>
         </Link>
         <input
@@ -46,7 +36,7 @@ const App = () => {
         </button>
       </div>
       <div className="outlet-container">
-        <Outlet context={[searchInput, setSearchInput, userId, theme, setTheme]} /> {/* Pass theme state through context */}
+        <Outlet context={[searchInput, setSearchInput, theme, setTheme]} /> {/* Pass theme state through context */}
       </div>
     </div>
   );

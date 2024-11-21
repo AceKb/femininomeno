@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-const Post = ({ id, time, title, upvotes }) => {
+const Post = ({id, time, title, upvotes}) => {
   return (
     <Link to={`/${id}`}>
       <div className="post-container">

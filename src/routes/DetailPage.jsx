@@ -6,188 +6,147 @@ const DetailPage = () => {
   const params = useParams();
   const [post, setPost] = useState(null);
   const [comment, setComment] = useState("");
-  const [comments, setComments] = useState([]); // Initialize comments as an empty array
-  const [secretKey, setSecretKey] = useState("");
-  const [referencedPost, setReferencedPost] = useState(null); // Add state for referenced post
-  const [loading, setLoading] = useState(true); // Add loading state
+  const [comments, setComments] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect (() => {
+    fetchPost().catch(console.error);
+    fetchComments().catch(console.error);
+  }, []);
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchPost().catch(console.error);
-    fetchComments().catch(console.error);
-  }, [params.id]);
-
   const fetchPost = async () => {
-    setLoading(true); // Set loading to true when fetching starts
-    const { data } = await supabase
+    setLoading(true);
+    const {data} = await supabase
       .from('posts')
       .select()
       .eq('id', params.id);
 
     setPost(data[0]);
-
-    if (data[0].referencePostId) {
-      const { data: refData } = await supabase
-        .from('posts')
-        .select()
-        .eq('id', data[0].referencePostId);
-
-      setReferencedPost(refData[0]);
-    }
-    setLoading(false); // Set loading to false when fetching ends
+    setLoading(false);
   };
 
   const fetchComments = async () => {
-    const { data } = await supabase
+    setLoading(true);
+    const {data} = await supabase
       .from('comments')
       .select()
       .eq('post_id', params.id)
       .order('created_at', { ascending: true });
 
-    setComments(data || []); // Ensure comments is always an array
+    setComments(data.map(item => item.comment));
+    setLoading(false);
   };
 
-  const increaseUpvote = async () => {
-    const updatedPost = { ...post, upvotes: post.upvotes + 1 };
-    setPost(updatedPost);
-    await updateUpvotes(updatedPost);
+  const increaseUpvote = () => {
+    setPost({
+      ...post,
+      upvotes: post.upvotes + 1
+    });
+    updateUpvotes().catch(console.error);
   };
 
-  const updateUpvotes = async (updatedPost) => {
-    const { error } = await supabase
+  const updateUpvotes = async () => {
+    const {error} = await supabase
       .from('posts')
-      .update({ upvotes: updatedPost.upvotes })
+      .update({ upvotes: parseInt(post.upvotes + 1) })
       .eq('id', params.id);
-    if (error) console.error("Error updating upvotes:", error);
   };
 
   const deletePost = async () => {
-    const { error } = await supabase
-      .from('posts')
-      .delete()
-      .eq('id', params.id)
-      .eq('secretKey', secretKey);
-    
-    if (error) {
-      console.error("Error deleting post:", error);
-      return;
-    }
-    alert("Post deleted successfully!");
-    navigate("/", { replace: true });
-  };
-
-  const deleteComment = async (commentId) => {
-    const key = prompt("Enter secret key to delete comment:");
-    const { error } = await supabase
+    await supabase
       .from('comments')
       .delete()
-      .eq('id', commentId)
-      .eq('secretKey', key);
+      .eq('post_id', params.id);
 
-    if (error) {
-      alert("Invalid secret key. Comment not deleted.");
-      return;
-    }
+    await supabase
+      .from('posts')
+      .delete()
+      .eq('id', params.id);
 
-    setComments(comments.filter((_, index) => index !== commentId));
-    alert("Comment deleted successfully!");
+    alert("Post and its comments are deleted successfully!");
+    navigate(`/`, {replace: true});
   };
 
   const handleChange = (e) => {
     setComment(e.target.value);
   };
 
-  const createComment = async () => {
-    if (comment.trim() === "") return;
-    await insertComment();
-    setComments([...comments, comment]);
+  const createComment = () => {
+    insertComment().catch(console.error);
+    setComments([
+      ...comments,
+      comment
+    ]);
     setComment("");
   };
 
   const insertComment = async () => {
-    const { error } = await supabase
+    const {error} = await supabase
       .from('comments')
-      .insert({ post_id: params.id, comment: comment });
-
-    if (error) {
-      console.error("Error inserting comment:", error);
-    }
-  };
+      .insert({ post_id: params.id, comment: comment});
+  }
 
   const formatTime = (time) => {
-    let postedTime = (Date.now() - Date.parse(time)) / 1000;
-    if (postedTime <= 60) return `${Math.floor(postedTime)} seconds`;
-    if (postedTime <= 3600) return `${Math.floor(postedTime / 60)} minutes`;
-    if (postedTime <= 86400) return `${Math.floor(postedTime / 3600)} hours`;
-    if (postedTime <= 604800) return `${Math.floor(postedTime / 86400)} days`;
-    return `${Math.floor(postedTime / 604800)} weeks`;
+    let postedTime = (Date.now() - Date.parse(time))/1000;
+
+    if (postedTime <= 60)
+      return `${Math.floor(postedTime)} seconds`;
+    if (postedTime <= 60*60)
+      return `${Math.floor(postedTime/60)} minutes`;
+    if (postedTime <= 60*60*24)
+      return `${Math.floor(postedTime/(60*60))} hours`;
+    if (postedTime <= 60*60*24*7)
+      return `${Math.floor(postedTime/(60*60*24))} days`;
+    if (postedTime <= 60*60*24*30)
+      return `${Math.floor(postedTime/(60*60*24*7))} weeks`;
+    if (postedTime <= 60*60*24*7*52)
+      return `${Math.floor(postedTime/(60*60*24*30))} months`;
+    if (postedTime > 60*60*24*7*52)
+      return `${Math.floor(postedTime/(60*60*24*7*52))} years`;
   };
 
   return (
     <div className="detail-page">
       {loading ? (
-        <div className="loading">Loading...</div> // Display loading animation
+        <div className="loading">
+          <div className="loading-spinner"></div>
+          Loading...
+        </div>
       ) : (
         post && (
           <div className="detail-container">
-            {referencedPost && (
-              <div className="referenced-post">
-                <h4>Referenced Post:</h4>
-                <Link to={`/${referencedPost.id}`}>
-                  <div className="title">{referencedPost.title}</div>
-                </Link>
-              </div>
-            )}
-            <div className="time">Posted {formatTime(post.created_at)} ago by {post.userId}</div>
+            <div className="time">Posted {formatTime(post.created_at)} ago</div>
             <div className="title">{post.title}</div>
             <div className="content">{post.content}</div>
-            {post.imageUrl && <img className="post-img" src={post.imageUrl} alt="Post image" />}
-            {post.videoUrl && <div className="video-url"><a href={post.videoUrl} target="_blank" rel="noopener noreferrer">Watch Video</a></div>}
-            {post.flags && <div className="flags">Flags: {post.flags}</div>}
+            <div>
+              {post.imageUrl && post.imageUrl !== "" ? 
+                <img className="post-img" src={post.imageUrl} alt="image" /> :
+                <div></div>
+              }
+            </div>
             <div className="edit-section">
               <div className="upvote">
                 <span onClick={increaseUpvote}><i className="bi bi-hand-thumbs-up"></i></span>
                 <span>{post.upvotes} upvotes</span>
               </div>
               <div className="action">
-                <span onClick={() => {
-                  const key = prompt("Enter secret key to edit:");
-                  if (key === post.secretKey) {
-                    navigate(`/edit/${params.id}`);
-                  } else {
-                    alert("Invalid secret key.");
-                  }
-                }} className="edit"><i className="bi bi-pencil"></i></span>
-                <span onClick={() => {
-                  const key = prompt("Enter secret key to delete:");
-                  setSecretKey(key);
-                  deletePost();
-                }} className="delete"><i className="bi bi-trash3"></i></span>
+                <Link to={`/edit/${params.id}`}><span className="edit"><i className="bi bi-pencil"></i></span></Link>
+                <span onClick={deletePost} className="delete"><i className="bi bi-trash3"></i></span>
               </div>
             </div>
 
             <div className="comment-section">
-              {comments.length > 0 && (
-                <ul>
+              <div>{comments && comments.length > 0 && 
+                (<ul>
                   {comments.map((item, index) => (
-                    <li key={index}>
-                      {item.comment} by {item.userId}
-                      <span onClick={() => deleteComment(index)} className="delete-comment">
-                        <i className="bi bi-trash3"></i>
-                      </span>
-                    </li>
+                    <li key={index}>{item}</li>
                   ))}
-                </ul>
-              )}
+                </ul>)}
+              </div>
               <div className="send-comment">
-                <input
-                  name="comment"
-                  type="text"
-                  placeholder="Leave a comment..."
-                  value={comment}
-                  onChange={handleChange}
-                />
+                <input name="comment" type="text" placeholder="Leave a comment..." value={comment} onChange={handleChange} />
                 <button type="button" onClick={createComment}>Send</button>
               </div>
             </div>

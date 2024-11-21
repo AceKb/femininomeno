@@ -4,12 +4,11 @@ import { supabase } from '../client';
 import { useOutletContext } from "react-router-dom";
 
 const HomePage = () => {
-  const [searchInput, setSearchInput, userId, theme, setTheme] = useOutletContext(); // Get theme state from context
+  const [searchInput, setSearchInput] = useOutletContext();
   const [posts, setPosts] = useState([]);
   const [filteredPosts, setFilteredPosts] = useState([]);
   const [sortBy, setSortBy] = useState('');
-  const [filterByFlag, setFilterByFlag] = useState('');
-  const [loading, setLoading] = useState(true); // Add loading state
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setSearchInput("");
@@ -20,12 +19,8 @@ const HomePage = () => {
     searchPosts();
   }, [searchInput]);
 
-  useEffect(() => {
-    filterPostsByFlag();
-  }, [filterByFlag]);
-
   const fetchPosts = async () => {
-    setLoading(true); // Set loading to true when fetching starts
+    setLoading(true);
     const {data} = await supabase
       .from('posts')
       .select()
@@ -34,32 +29,19 @@ const HomePage = () => {
     setPosts(data);
     setFilteredPosts(data);
     setSortBy('date');
-    setLoading(false); // Set loading to false when fetching ends
+    setLoading(false);
   };
 
   const searchPosts = () => {
+    let filteredResults = posts;
+
     if (searchInput !== "") {
-      const filteredResults = posts.filter((item) =>
+      filteredResults = filteredResults.filter((item) =>
         item.title.toLowerCase().includes(searchInput.toLowerCase())
       );
-
-      setFilteredPosts(filteredResults);
-    } else {
-      if (posts && posts.length > 0) {
-        setFilteredPosts(posts);
-      }
     }
-  };
 
-  const filterPostsByFlag = () => {
-    if (filterByFlag !== '') {
-      const filteredResults = posts.filter((item) =>
-        item.flags && item.flags.includes(filterByFlag)
-      );
-      setFilteredPosts(filteredResults);
-    } else {
-      setFilteredPosts(posts);
-    }
+    setFilteredPosts(filteredResults);
   };
 
   const sortPostsByDate = () => {
@@ -94,25 +76,19 @@ const HomePage = () => {
   };
 
   return (
-    <div className={`home-page ${theme}`}>
+    <div className="home-page">
       <div className="sort-container">
         Order by:
         <span onClick={sortPostsByDate} className={sortBy == 'date' ? 'selected' : ''}>Newest</span>
         <span onClick={sortPostsByVote} className={sortBy == 'vote' ? 'selected' : ''}>Most Popular</span>
       </div>
-      <div className="filter-container">
-        Filter by flag:
-        <select onChange={(e) => setFilterByFlag(e.target.value)} value={filterByFlag}>
-          <option value="">All</option>
-          <option value="flag1">Flag 1</option>
-          <option value="flag2">Flag 2</option>
-          {/* Add more options as needed */}
-        </select>
-      </div>
       {loading ? (
-        <div className="loading">Loading...</div> // Display loading animation
+        <div className="loading">
+          <div className="loading-spinner"></div>
+          Loading...
+        </div>
       ) : (
-        filteredPosts && filteredPosts.length > 0 ?
+        filteredPosts && filteredPosts.length > 0 ? (
           <div>
             {filteredPosts.map((item) => (
               <Post
@@ -121,10 +97,13 @@ const HomePage = () => {
                 time={formatTime(item.created_at)}
                 title={item.title}
                 upvotes={item.upvotes}
+                updatedTime={formatTime(item.updated_at)} // Add updated time
               />
             ))}
-          </div> :
+          </div>
+        ) : (
           <div>There is no post.</div>
+        )
       )}
     </div>
   );

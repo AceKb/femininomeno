@@ -26,15 +26,29 @@ The following **optional** features are implemented:
 - [x] Users can customize the interface of the web app
 
 
+<<<<<<< Updated upstream
 
 The following **additional** features are implemented:
 - animation in the landing page
+=======
+- [x] Users can customize the interface of the web app
+
+
+The following **additional** features are implemented:
+
+* [ ] List anything else that you added to improve the site's functionality!
+animated landing page
+>>>>>>> Stashed changes
 
 ## Video Walkthrough
 
 Here's a walkthrough of implemented user stories:
 
+<<<<<<< Updated upstream
 <img src='' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+=======
+<img src='2024-11-21T06_08_30.794Z.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+>>>>>>> Stashed changes
 
 <!-- Replace this with whatever GIF tool you used! -->
 GIF created with ...  
